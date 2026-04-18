@@ -1,0 +1,13 @@
+# 一行一个美股代码，# 开头为注释
+# 修改后提交到 GitHub，Actions 会自动重建 earnings.ics
+
+AAPL
+MSFT
+GOOGL
+META
+AMZN
+NVDA
+TSLA
+AMD
+AVGO
+NFLX

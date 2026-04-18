@@ -1,0 +1,45 @@
+name: Update earnings.ics
+
+on:
+  schedule:
+    - cron: "0 6 * * *"       # 每天 06:00 UTC ≈ 美东 02:00
+  workflow_dispatch:
+  push:
+    paths:
+      - watchlist.txt
+      - sources.py
+      - main.py
+      - requirements.txt
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Build earnings.ics
+        env:
+          FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+        run: python main.py
+
+      - name: Commit if changed
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add earnings.ics
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "chore: update earnings.ics"
+            git push
+          fi
